@@ -27,3 +27,17 @@ Authentication Emulator, Functions Emulator, Firestore Emulatorを起動する
 ```
 $ make start
 ```
+
+## Deploy
+- Development
+  ```
+  $ make deploy
+  ```
+- Staging
+  ```
+  $ make deploy-staging
+  ```
+- Production
+  ```
+  $ make deploy-production
+  ```

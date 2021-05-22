@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "karitomorise-dev"
+    "default": "karitomorise-dev",
+    "staging": "karitomorise-stg",
+    "production": "karitomorise"
   }
 }
