@@ -88,7 +88,7 @@ exports.sendNotification = functions
               error.code === "messaging/registration-token-not-registered"
             ) {
               transaction.update(userDocRef, {
-                fcmTokens: admin.firestore().FieldValue.arrayRemove(tokens[i]),
+                fcmTokens: admin.firestore.FieldValue.arrayRemove(tokens[i]),
               });
             }
           }
