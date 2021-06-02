@@ -61,35 +61,34 @@ exports.sendNotification = functions
 
         if (!tokens.length) {
           functions.logger.log("FCM Token Empty");
-          return;
-        }
-
-        const payload = {
-          notification: {
-            title: `>>${replyToNumber}`,
-            body: `${body}`,
-            badge: "1",
-            sound: "default",
-          },
-        };
-        const response = await admin.messaging().sendToDevice(tokens, payload);
-        const results = response.results;
-        for (let i = 0; i < results.length; i++) {
-          const result = results[i];
-          const error = result.error;
-          if (error) {
-            functions.logger.error(
-              "Failure sending notification to",
-              tokens[i],
-              error
-            );
-            if (
-              error.code === "messaging/invalid-registration-token" ||
-              error.code === "messaging/registration-token-not-registered"
-            ) {
-              transaction.update(userDocRef, {
-                fcmTokens: admin.firestore.FieldValue.arrayRemove(tokens[i]),
-              });
+        } else {
+          const payload = {
+            notification: {
+              title: `>>${replyToNumber}`,
+              body: `${body}`,
+              badge: "1",
+              sound: "default",
+            },
+          };
+          const response = await admin.messaging().sendToDevice(tokens, payload);
+          const results = response.results;
+          for (let i = 0; i < results.length; i++) {
+            const result = results[i];
+            const error = result.error;
+            if (error) {
+              functions.logger.error(
+                "Failure sending notification to",
+                tokens[i],
+                error
+              );
+              if (
+                error.code === "messaging/invalid-registration-token" ||
+                error.code === "messaging/registration-token-not-registered"
+              ) {
+                transaction.update(userDocRef, {
+                  fcmTokens: admin.firestore.FieldValue.arrayRemove(tokens[i]),
+                });
+              }
             }
           }
         }
