@@ -26,15 +26,15 @@ exports.sendNotification = functions
       const docs = snapshot.docs;
 
       if (docs.length == 0) {
-        functions.logger.log(
-          `Post document is not found. ( No.${replyToNumber} )`
+        functions.logger.error(
+          `Post document is not found. ( number: ${replyToNumber} )`
         );
         return;
       }
 
       if (docs.length > 1) {
-        functions.logger.log(
-          `There are posts with the same number. ( No.${replyToNumber} )`
+        functions.logger.error(
+          `The same number post exists. ( number: ${replyToNumber} )`
         );
         return;
       }
@@ -53,14 +53,14 @@ exports.sendNotification = functions
         const userDoc = await transaction.get(userDocRef);
 
         if (!userDoc.exists) {
-          functions.logger.log("User Document Not Found");
+          functions.logger.error(`User document is not found. ( uid: ${uid} )`);
           return;
         }
 
         const tokens = userDoc.data()["notificationTokens"];
 
         if (!tokens.length) {
-          functions.logger.log("Notification Token Empty");
+          functions.logger.log("Notification tokens don't exist.");
         } else {
           const payload = {
             notification: {
@@ -70,7 +70,9 @@ exports.sendNotification = functions
               sound: "default",
             },
           };
-          const response = await admin.messaging().sendToDevice(tokens, payload);
+          const response = await admin
+            .messaging()
+            .sendToDevice(tokens, payload);
           const results = response.results;
           for (let i = 0; i < results.length; i++) {
             const result = results[i];
@@ -86,7 +88,9 @@ exports.sendNotification = functions
                 error.code === "messaging/registration-token-not-registered"
               ) {
                 transaction.update(userDocRef, {
-                  notificationTokens: admin.firestore.FieldValue.arrayRemove(tokens[i]),
+                  notificationTokens: admin.firestore.FieldValue.arrayRemove(
+                    tokens[i]
+                  ),
                 });
               }
             }
