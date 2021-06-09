@@ -57,10 +57,10 @@ exports.sendNotification = functions
           return;
         }
 
-        const tokens = userDoc.data()["fcmTokens"];
+        const tokens = userDoc.data()["notificationTokens"];
 
         if (!tokens.length) {
-          functions.logger.log("FCM Token Empty");
+          functions.logger.log("Notification Token Empty");
         } else {
           const payload = {
             notification: {
@@ -86,7 +86,7 @@ exports.sendNotification = functions
                 error.code === "messaging/registration-token-not-registered"
               ) {
                 transaction.update(userDocRef, {
-                  fcmTokens: admin.firestore.FieldValue.arrayRemove(tokens[i]),
+                  notificationTokens: admin.firestore.FieldValue.arrayRemove(tokens[i]),
                 });
               }
             }
