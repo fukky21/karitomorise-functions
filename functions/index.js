@@ -41,8 +41,9 @@ exports.sendNotification = functions
 
       const doc = docs[0];
       const uid = doc.data()["uid"];
+      const isAnonymous = doc.data()["isAnonymous"];
 
-      if (!uid) {
+      if (isAnonymous) {
         // 返信先の投稿が匿名投稿の場合は終了する
         return;
       }
